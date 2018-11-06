@@ -13,6 +13,16 @@
     3) Insert images into **images/**
     4) Run the python script: `python convert_gt_yolo.py`
 
+- ### convert keras-yolo3 to our format:
+
+    1) Add or update the class list to the file `class_list.txt`
+    2) Use the parameter `--gt` to set the **ground-truth** source.
+    3) Run the python script: `python3 convert_keras-yolo3.py --gt <gt_file_path>`
+        1) Supports only python 3.
+        2) This code can handle recursive annotation structure. Just use the `-r` parameter.
+        3) The converted annotation is placed by default in a new from_kerasyolo3 folder. You can change that with the parameter `-o`.
+        4) The format is defined according with github.com/qqwweee/keras-yolo3
+
 ## Predicted:
 - ### convert darkflow `json` to our format:
 
@@ -21,10 +31,20 @@
 
 - ### convert YOLO to our format:
 
-    1) Add class list to the file `class_list.txt`
-    2) Insert predicted objects files into **predicted/**
-    3) Insert images into **images/**
-    4) Run the python script: `python convert_pred_yolo.py`
+    After runnuning darknet on a list of images, e.g.: `darknet.exe detector test data/voc.data yolo-voc.cfg yolo-voc.weights -dont_show -ext_output < data/test.txt > result.txt`
+
+    1) Copy the file `result.txt` to the folder `extra/`
+    2) Run the python script: `python convert_pred_yolo.py`
+
+- ### convert keras-yolo3 to our format:
+
+    1) Add or update the class list to the file `class_list.txt`
+    2) Use the parameter `--predicted` to set the **prediction** source.
+    3) Run the python script: `python3 convert_keras-yolo3.py --pred <prediction_file_path>`
+        1) Supports only python 3.
+        2) This code can handle recursive annotation structure. Just use the `-r` parameter.
+        3) The converted annotation is placed by default in a new from_kerasyolo3 folder. You can change that with the parameter `-o`.
+        4) The format is defined according with github.com/gustavovaliati/keras-yolo3
 
 ## Remove specific char delimiter from files
 
