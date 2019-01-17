@@ -12,6 +12,13 @@ if len(sys.argv) > 1:
     if sys.argv[1] == 'p':
         do_gt = False
 
+voc_classes = ['background',
+                                'aeroplane', 'bicycle', 'bird', 'boat',
+                                'bottle', 'bus', 'car', 'cat',
+                                'chair', 'cow', 'diningtable', 'dog',
+                                'horse', 'motorbike', 'person', 'pottedplant',
+                                'sheep', 'sofa', 'train', 'tvmonitor']
+
 def convert_gt():
     # change directory to the one with the files to be changed
     path_to_folder = '../ground-truth'
@@ -71,11 +78,11 @@ def convert_pred():
 
         for bb in data:
             # 1. create new file or open existing
-            with open(bb['image_id'].replace('png', 'txt'), 'a') as new_f:
+            with open(bb['image_id'].split('.')[0] + '.txt', 'a') as new_f:
                 obj_conf = bb['score']
                 if obj_conf < 0.01:
                     continue
-                obj_name = 'person'
+                obj_name = voc_classes[bb['category_id']]
                 left = bb['bbox'][0]
                 top = bb['bbox'][1]
                 right = bb['bbox'][2] + left
