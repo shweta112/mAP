@@ -13,7 +13,7 @@ MINOVERLAP = 0.5 # default value (defined in the PASCAL VOC2012 challenge)
 NOOCCL = 0
 PARTIALOCCL = 1
 HEAVYOCCL = 2
-CONF = 0.5
+CONF = 0.0
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-na', '--no-animation', help="no animation is shown.", action="store_true")
@@ -49,10 +49,10 @@ if args.set_class_iou is not None:
 # make sure that the cwd() is the location of the python script (so that every path makes sense)
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-GT_PATH = os.path.join(os.getcwd(), 'input', 'ground-truth')
-DR_PATH = os.path.join(os.getcwd(), 'input', 'detection-results')
+GT_PATH = '/media/shweta.mahajan/Daten/Human_Detection/Datasets/CaltechPedestrians/Caltech_new_annotations/anno_test_1xnew/'
+DR_PATH = '/media/shweta.mahajan/Daten/Human_Detection/Datasets/CaltechPedestrians/faster-rcnn_resnet101_50p/'
 # if there are no images then no animation can be shown
-IMG_PATH = os.path.join(os.getcwd(), 'input', 'images-optional')
+IMG_PATH = '/media/shweta.mahajan/Daten/Human_Detection/Datasets/CaltechPedestrians/voc/images-optional/'
 if os.path.exists(IMG_PATH): 
     for dirpath, dirnames, files in os.walk(IMG_PATH):
         if not files:
@@ -355,7 +355,7 @@ def draw_plot_func(dictionary, n_classes, window_title, plot_title, x_label, out
 TEMP_FILES_PATH = ".temp_files"
 if not os.path.exists(TEMP_FILES_PATH): # if it doesn't exist already
     os.makedirs(TEMP_FILES_PATH)
-results_files_path = "results"
+results_files_path = "results_cal"
 if os.path.exists(results_files_path): # if it exist already
     # reset the results directory
     shutil.rmtree(results_files_path)
@@ -407,8 +407,10 @@ for txt_file in ground_truth_files_list:
                     class_name, left, top, right, bottom, _difficult, occlusion, _v = line.split()
                     is_difficult = bool(int(_difficult))
                     reasonable = is_reasonable(occlusion, top, bottom)
+            elif "%" in line:
+                    continue
             else:
-                    class_name, left, top, right, bottom = line.split()
+                    class_name, left, top, right, bottom = line.split()[:5]
         except ValueError:
             error_msg = "Error: File " + txt_file + " in the wrong format.\n"
             error_msg += " Expected: <class_name> <left> <top> <right> <bottom> ['difficult']\n"
@@ -419,7 +421,7 @@ for txt_file in ground_truth_files_list:
         # check if class is in the ignore list, if yes skip
         if class_name in args.ignore:
             continue
-        bbox = left + " " + top + " " + right + " " +bottom
+        bbox = left + " " + top + " " + str(float(right) + float(left)) + " " + str(float(bottom) + float(top))
         if is_difficult:
                 bounding_boxes.append({"class_name":class_name, "bbox":bbox, "used":False, "difficult":True, "reasonable":reasonable})
                 is_difficult = False
@@ -552,7 +554,7 @@ with open(results_files_path + "/results.txt", 'w') as results_file:
             file_id = detection["file_id"]
             if show_animation:
                 # find ground truth image
-                ground_truth_img = glob.glob1(IMG_PATH, file_id + ".*")
+                ground_truth_img = glob.glob1(IMG_PATH, file_id.split('.')[0] + ".*")
                 #tifCounter = len(glob.glob1(myPath,"*.tif"))
                 if len(ground_truth_img) == 0:
                     error("Error. Image not found with id: " + file_id)

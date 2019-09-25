@@ -30,12 +30,17 @@ for tmp_file in xml_list:
     root = ET.parse(tmp_file).getroot()
     for obj in root.findall('object'):
       obj_name = obj.find('name').text
+      # obj_name = obj.find('name').text.split('?')[0]
+      if obj_name != 'person':
+        continue
       bndbox = obj.find('bndbox')
       left = bndbox.find('xmin').text
       top = bndbox.find('ymin').text
       right = bndbox.find('xmax').text
       bottom = bndbox.find('ymax').text
-      new_f.write("%s %s %s %s %s\n" % (obj_name, left, top, right, bottom))
+      difficult = obj.find('difficult').text
+      occlusion = obj.find('occlusion').text
+      new_f.write("%s %s %s %s %s %s %s verbose\n" % (obj_name, left, top, right, bottom, difficult, occlusion))
   # 2. move old file (xml format) to backup
-  os.rename(tmp_file, os.path.join(backup, tmp_file))
+  os.rename(tmp_file, os.path.join("backup", tmp_file))
 print("Conversion completed!")
